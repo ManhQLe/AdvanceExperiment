@@ -12,18 +12,21 @@ namespace Experiment
 		static void Main(string[] args)
 		{
 			Experiment exp = null;
+			var bk = Console.ForegroundColor;
 			do
-			{
+			{				
+				Console.Write("> ");
 				var cmd = Console.ReadLine();
-				Console.Write(">");
 				try
 				{
 					args = SplitArguments(cmd);
 					if (args[0] != "exit") {
 
-						Type x = Type.GetType(args[0]);
-
+						Type x = Type.GetType("Experiment." + args[0]);
+						if (x == null)
+							throw new Exception("Invalid command");
 						exp = Activator.CreateInstance(x) as Experiment;
+						Console.ForegroundColor = bk;
 						exp.Run(args.Skip(1).ToArray());
 					}
 					else
@@ -31,10 +34,9 @@ namespace Experiment
 				}
 				catch (Exception ex)
 				{
-					var bk = Console.BackgroundColor;
-					Console.BackgroundColor = ConsoleColor.Red;
+					Console.ForegroundColor = ConsoleColor.Red;
 					Console.WriteLine(ex);
-					Console.BackgroundColor = bk;
+					Console.ForegroundColor = bk;
 				}
 
 
